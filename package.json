@@ -1,0 +1,32 @@
+{
+  "name": "sa",
+  "version": "1.0.0",
+  "description": "SA, Ensalamento, Senai",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hyanventura/SA.git"
+  },
+  "keywords": [
+    "SA",
+    "Ensalamento",
+    "Senai"
+  ],
+  "author": "Hyan Ventura, Ramon Kurt, Lucas Schmitz, Marcos Voss, Higor Prudencio",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Hyanventura/SA/issues"
+  },
+  "homepage": "https://github.com/Hyanventura/SA#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
