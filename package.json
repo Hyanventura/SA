@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,8 @@
   "homepage": "https://github.com/Hyanventura/SA#readme",
   "dependencies": {
     "body-parser": "^1.20.2",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "pg": "^8.11.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
