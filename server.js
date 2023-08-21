@@ -5,8 +5,10 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
 const cadastrarRoutes = require("./routes/cadastrar")
+const editarRoutes = require ("./routes/editar")
 
 app.use('/cadastrar', cadastrarRoutes)
+app.use('/editar', editarRoutes)
 
 
 app.listen(port, () =>{
