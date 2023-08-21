@@ -2,8 +2,8 @@ const database = require("../config/database")
 
 
 exports.update = (req,res) =>{
-    const query = "UPDATE professores SET nome=$1, disciplina=$2, status=$3 WHERE cpf=$4"
-    const values = [req.body.nome, req.body.disciplina, req.body.status, req.params.cpf]
+    const query = "UPDATE professores SET nome=$1, status=$2 WHERE cpf=$3"
+    const values = [req.body.nome, req.body.status, req.params.cpf]
 
     database.query(query,values).then(
         ()=>{

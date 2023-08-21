@@ -2,8 +2,8 @@ const database = require("../config/database");
 
 
 exports.post = (req, res) => {
-    const query = "INSERT INTO professores(cpf, nome, disciplina, status) VALUES ($1, $2, $3, $4);";
-    const values = [req.body.cpf, req.body.nome, req.body.disciplina, req.body.status];
+    const query = "INSERT INTO professores(cpf, nome,  status) VALUES ($1, $2, $3);";
+    const values = [req.body.cpf, req.body.nome, req.body.status];
 
 
     database.query(query, values).then(
