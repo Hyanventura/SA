@@ -30,3 +30,19 @@ exports.disciplina = (req, res) => {
 
     )
 }
+
+
+exports.sala = (req, res) => {
+    const query = "SELECT * FROM salas"
+    database.query(query).then(
+        (resultado) => {
+            res.status(200).send({ disciplinas: resultado.rows })
+          
+        },
+        (erro) => {
+            res.status(500).send({ erro: erro })
+        
+        }
+
+    )
+}
