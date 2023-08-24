@@ -36,7 +36,7 @@ exports.sala = (req, res) => {
     const query = "SELECT * FROM salas"
     database.query(query).then(
         (resultado) => {
-            res.status(200).send({ disciplinas: resultado.rows })
+            res.status(200).send({ Salas : resultado.rows })
           
         },
         (erro) => {
