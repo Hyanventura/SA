@@ -4,5 +4,6 @@ const controller = require('./../controllers/delete')
 
 router.delete('/professor/:cpf', controller.professor)
 router.delete('/disciplina/:id', controller.disciplina)
+router.delete('/sala/:id', controller.sala)
 
 module.exports = router

@@ -4,5 +4,7 @@ const controller = require('./../controllers/consultar')
 
 router.get('/professor', controller.professor)
 router.get('/disciplina', controller.disciplina)
+router.get('/sala', controller.sala)
+
 
 module.exports = router
