@@ -63,3 +63,18 @@ exports.turma = (req, res) => {
 
     )
 }
+
+exports.curso = (req, res) => {
+    const query = "SELECT * FROM cursos"
+    database.query(query).then(
+        (resultado) => {
+            res.status(200).send({ cursos : resultado.rows })
+          
+        },
+        (erro) => {
+            res.status(500).send({ erro: erro })
+        
+        }
+
+    )
+}
