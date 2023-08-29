@@ -8,6 +8,7 @@ router.get('/sala', controller.sala)
 router.get('/turma', controller.turma)
 router.get('/curso', controller.curso)
 router.get('/disciplinaProfessor', controller.disciplinaProfessor)
+router.get('/disponibidadeEspecifica/:cpf_professor', controller.disponibilidadeEspecifica)
 
 
 module.exports = router
