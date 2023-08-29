@@ -54,3 +54,16 @@ exports.turma = (req, res) => {
         }
     )
 }   
+
+exports.curso = (req, res) => {
+    const query = "INSERT INTO cursos(nome) VALUES ($1);";
+    const values = [req.body.nome];
+    database.query(query, values).then(
+        () => {
+            return res.status(201).send({ mensagem: "Curso cadastrado com Sucesso!" });
+        },
+        (erro) => {
+            return res.status(500).send({ erro: erro });
+        }
+    )
+}   

@@ -7,5 +7,6 @@ router.post('/professor', controller.professor)
 router.post('/disciplina', controller.disciplina)
 router.post('/sala', controller.sala)
 router.post('/turma', controller.turma)
+router.post('/curso', controller.curso)
 
 module.exports = router
