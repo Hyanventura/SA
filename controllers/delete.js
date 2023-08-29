@@ -45,3 +45,20 @@ database.query(query, values).then(
 }
 
 
+exports.turma = (req,res) =>{
+    const query = "DELETE FROM turmas WHERE id=$1;"
+    const values = [req.params.id]
+    
+database.query(query, values).then(
+    () => {
+        res.status(200).json({mensagem : "turma removida com sucesso"})
+    },
+    (erro) =>{
+        res.status(500).send({erro:erro})
+    }
+)
+}
+
+
+
+

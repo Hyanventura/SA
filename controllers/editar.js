@@ -48,3 +48,19 @@ exports.sala = (req,res) =>{
         }
     )
 }
+
+exports.turma = (req,res) =>{
+    const query = "UPDATE turmas SET nome=$1 WHERE id=$2"
+    const values = [req.body.nome, req.params.id]
+
+    database.query(query,values).then(
+        ()=>{
+            res.status(200).send({mensagem: "turma atualizada com sucesso!"}
+            )
+            
+        },
+        (erro) => {
+            res.status(500).send({erro:erro})
+        }
+    )
+}

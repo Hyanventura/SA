@@ -41,3 +41,16 @@ exports.sala = (req, res) => {
         }
     )
 }   
+
+exports.turma = (req, res) => {
+    const query = "INSERT INTO turmas(nome) VALUES ($1);";
+    const values = [req.body.nome];
+    database.query(query, values).then(
+        () => {
+            return res.status(201).send({ mensagem: "Turma cadastrada com Sucesso!" });
+        },
+        (erro) => {
+            return res.status(500).send({ erro: erro });
+        }
+    )
+}   
