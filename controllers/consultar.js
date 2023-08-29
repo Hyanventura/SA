@@ -110,3 +110,20 @@ exports.disponibilidadeEspecifica = (req, res) => {
     )
 }
 
+exports.disponibilidade = (req, res) => {
+    const query = "select professores.nome as PROFESSOR, dias_semana.nome as DISPONIVEL from disponibilidade left join professores on professores.cpf = disponibilidade.cpf_professor left join dias_semana on dias_semana.id = disponibilidade.id_dia_semana"
+ 
+    database.query(query).then(
+        (resultado) => {
+            res.status(200).send({ Disponibilidade : resultado.rows })
+          
+        },
+        (erro) => {
+        
+            res.status(500).send({ erro: erro })
+        
+        }
+
+    )
+}
+
