@@ -78,3 +78,18 @@ exports.curso = (req, res) => {
 
     )
 }
+
+exports.disciplinaProfessor = (req, res) => {
+    const query = "select disciplina_professores.cpf_professor, professores.nome as PROFESSOR, disciplinas.nome as DISCIPLINA from disciplina_professores left join professores on professores.cpf = disciplina_professores.cpf_professor left join disciplinas on disciplinas.id = disciplina_professores.id_disciplina"
+    database.query(query).then(
+        (resultado) => {
+            res.status(200).send({ DisciplinaEProfessor : resultado.rows })
+          
+        },
+        (erro) => {
+            res.status(500).send({ erro: erro })
+        
+        }
+
+    )
+}
