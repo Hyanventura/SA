@@ -7,6 +7,7 @@ exports.professor = (req, res) => {
     database.query(query, values).then(
         () => {
             disponibilidadeProfessor(req, res)
+            disciplinaProfessor(req, res)
             return res.status(201).send({ mensagem: "Professor cadastrado com Sucesso!" });
         },
         (erro) => {
@@ -18,16 +19,26 @@ exports.professor = (req, res) => {
 }
 
 const disponibilidadeProfessor = (req, res) => {
-    const diasSemana = [req.body.seg, req.body.ter, req.body.qua, req.body.qui, req.body.sex]
+    let diasSemana = [req.body.seg, req.body.ter, req.body.qua, req.body.qui, req.body.sex]
+    let id_dia_semana = 1;
 
-    for (i = 0; i < diasSemana.length; i++) {
+    for (let i = 0; i < diasSemana.length; i++) {
+        id_dia_semana++;
+        console.log(id_dia_semana)
+
         if (diasSemana[i] == 1) {
-            const query = "INSERT INTO disponibilidade(cpf_professor, id_dia_semana) VALUES ($1, $2)"
-            const values = [req.body.cpf, (i+=2)]
+            let query = "INSERT INTO disponibilidade(cpf_professor, id_dia_semana) VALUES ($1, $2)"
+            let values = [req.body.cpf, id_dia_semana]
             database.query(query, values)
         }
     }
 
+}
+
+const disciplinaProfessor = (req, res) => {
+    const query = "INSERT INTO disciplina_professores (cpf_professor, id_disciplina) VALUES ($1,$2)"
+    const values = [req.body.cpf, req.body.disciplina]
+    database.query(query, values)
 }
 
 exports.disciplina = (req, res) => {
