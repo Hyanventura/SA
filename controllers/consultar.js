@@ -3,6 +3,7 @@ const database = require("../config/database")
 
 exports.professor = (req, res) => {
     const query = "SELECT * FROM professores"
+    
     database.query(query).then(
         (resultado) => {
             res.status(200).send({ professores: resultado.rows })

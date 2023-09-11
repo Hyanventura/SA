@@ -7,6 +7,7 @@ exports.professor = (req,res) =>{
 
     database.query(query,values).then(
         ()=>{
+            disponibilidadeProfessor(req, res);
             res.status(200).send({mensagem: "Professor atualizado com sucesso!"}
             )
             
@@ -15,6 +16,27 @@ exports.professor = (req,res) =>{
             res.status(500).send({erro:erro})
         }
     )
+}
+
+const disponibilidadeProfessor = (req, res) => {
+    let diasSemana = [req.body.seg, req.body.ter, req.body.qua, req.body.qui, req.body.sex]
+    let id_dia_semana = 1;
+
+    cpfProfessor = [req.params.cpf]
+
+    database.query("delete from disponibilidade where cpf_professor = $1", cpfProfessor)
+
+    for (let i = 0; i < diasSemana.length; i++) {
+        id_dia_semana++;
+        console.log(id_dia_semana)
+
+        if (diasSemana[i] == 1) {
+            let query = "INSERT INTO disponibilidade(cpf_professor, id_dia_semana) VALUES ($1, $2)"
+            let values = [req.params.cpf, id_dia_semana]
+            database.query(query, values)
+        }
+    }
+
 }
 
 exports.disciplina = (req,res) =>{
