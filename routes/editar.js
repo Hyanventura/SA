@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const controller = require('./../controllers/editar')
+import controller from './../controllers/editar'
 
 router.put('/professor/:cpf', controller.professor)
 router.put('/disciplina/:id', controller.disciplina)

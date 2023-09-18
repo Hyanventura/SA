@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const controller = require('./../controllers/delete')
+import controller from './../controllers/delete'
 
 router.delete('/professor/:cpf', controller.professor)
 router.delete('/disciplina/:id', controller.disciplina)

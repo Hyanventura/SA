@@ -1,5 +1,4 @@
-const database = require('./../config/database')
-const xlsx = require("xlsx")
+import xlsx from "xlsx"
 
 const filePath = 'c:/users/hyan_ventura/desktop/salas.csv'
 
@@ -14,9 +13,9 @@ try{
         const query = "INSERT INTO salas (nome) VALUES ($1)";
         const values = [row.nome]
 
-        await database.query(query, values)
+        // await database.query(query, values)
     }
-    res.status(201).send ({mesagem:'Dados inseridos com Sucesso!'})
+    res.status(201).send ({mensagem:'Dados inseridos com Sucesso!'})
 }catch (error){
     console.error('Erro ao inserir dados : ', error);
 }

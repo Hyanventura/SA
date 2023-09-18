@@ -1,6 +1,6 @@
-const express = require('express')
+import express from 'express'
 const router = express.Router()
-const controller = require('./../controllers/cadastrar')
+import controller from './../controllers/cadastrar'
 
 
 router.post('/professor', controller.professor)
