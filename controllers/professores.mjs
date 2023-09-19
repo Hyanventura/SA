@@ -31,4 +31,11 @@ const editar = async (req, res) => {
     res.status(201).send({mensagem: `Professor portador do CPF ${cpf} editado com sucesso!`})
 }
 
-export {cadastrar, editar};
+const consultar = async (req, res) => {
+    const cpf = req.params.cpf;
+
+    const resultado = await professorFacade.consultar(cpf)
+    res.status(200).send(resultado)
+}
+
+export {cadastrar, editar, consultar};

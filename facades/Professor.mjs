@@ -25,9 +25,26 @@ export default class ProfessorFacade {
     }
 
     async editar(cpf, nome, status) {
-        try{
+        try {
             const comando = `UPDATE professores SET nome = '${nome}', status = ${status} where cpf = ${cpf}`
             await this.client.query(comando)
+        } catch (erro) {
+            console.error(erro)
+            return erro
+        }
+    }
+
+    async consultar(cpf) {
+        try {
+            if (cpf == 'todos') {
+                const comando = `SELECT * FROM professores`
+                const resultado = await this.client.query(comando)
+                return resultado.rows
+            } else {
+                const comando = `SELECT * FROM professores where cpf = ${cpf}`
+                const resultado = await this.client.query(comando)
+                return resultado.rows
+            }
         } catch (erro) {
             console.error(erro)
             return erro
@@ -39,13 +56,13 @@ export default class ProfessorFacade {
             let diasSemana = [seg, ter, qua, qui, sex]
             let id_dia_semana = 1;
 
-            const comandoDeletarDisponibilidade = `DELETE FROM disponibilidade where cpf_professor = (${cpf})` 
+            const comandoDeletarDisponibilidade = `DELETE FROM disponibilidade where cpf_professor = (${cpf})`
             await this.client.query(comandoDeletarDisponibilidade)
 
             for (let i = 0; i < diasSemana.length; i++) {
                 id_dia_semana++;
                 console.log(id_dia_semana)
-        
+
                 if (diasSemana[i] == 1) {
                     const comando = `INSERT INTO disponibilidade(cpf_professor, id_dia_semana) VALUES (${cpf}, ${id_dia_semana})`
                     await this.client.query(comando)
@@ -62,7 +79,7 @@ export default class ProfessorFacade {
         try {
             comando = `INSERT INTO disciplina_professores (cpf_professor, id_disciplina) VALUES (${cpf}, ${disciplina})`
             await this.client.query(comando)
-            
+
         } catch (erro) {
             console.error(erro)
             return erro
