@@ -1,21 +1,6 @@
 // const database = require("../config/database");
 
 
-
-
-// exports.disciplina = (req, res) => {
-//     const query = "INSERT INTO disciplinas(nome) VALUES ($1);";
-//     const values = [req.body.nome];
-//     database.query(query, values).then(
-//         () => {
-//             return res.status(201).send({ mensagem: "Disciplina cadastrada com Sucesso!" });
-//         },
-//         (erro) => {
-//             return res.status(500).send({ erro: erro });
-//         }
-//     )
-// }
-
 // exports.sala = (req, res) => {
 //     const query = "INSERT INTO salas(nome) VALUES ($1);";
 //     const values = [req.body.nome];

@@ -17,7 +17,7 @@ const cadastrar = async (req, res) => {
 }
 
 const editar = async (req, res) => {
-    const cpf = req.body.cpf;
+    const cpf = req.params.cpf;
     const nome = req.body.nome;
     const status = req.body.status;
     const seg = req.body.seg;

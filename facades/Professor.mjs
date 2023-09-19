@@ -91,9 +91,3 @@ export default class ProfessorFacade {
         await this.client.close()
     }
 }
-
-const disciplinaProfessor = (req, res) => {
-    const query = "INSERT INTO disciplina_professores (cpf_professor, id_disciplina) VALUES ($1,$2)"
-    const values = [req.body.cpf, req.body.disciplina]
-    database.query(query, values)
-}
