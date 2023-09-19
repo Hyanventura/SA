@@ -24,17 +24,30 @@ export default class ProfessorFacade {
         }
     }
 
+    async editar(cpf, nome, status) {
+        try{
+            const comando = `UPDATE professores SET nome = '${nome}', status = ${status} where cpf = ${cpf}`
+            await this.client.query(comando)
+        } catch (erro) {
+            console.error(erro)
+            return erro
+        }
+    }
+
     async disponibilidade(cpf, seg, ter, qua, qui, sex) {
         try {
             let diasSemana = [seg, ter, qua, qui, sex]
             let id_dia_semana = 1;
+
+            const comandoDeletarDisponibilidade = `DELETE FROM disponibilidade where cpf_professor = (${cpf})` 
+            await this.client.query(comandoDeletarDisponibilidade)
 
             for (let i = 0; i < diasSemana.length; i++) {
                 id_dia_semana++;
                 console.log(id_dia_semana)
         
                 if (diasSemana[i] == 1) {
-                    let comando = `INSERT INTO disponibilidade(cpf_professor, id_dia_semana) VALUES (${cpf}, ${id_dia_semana})`
+                    const comando = `INSERT INTO disponibilidade(cpf_professor, id_dia_semana) VALUES (${cpf}, ${id_dia_semana})`
                     await this.client.query(comando)
                 }
             }
