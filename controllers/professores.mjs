@@ -28,7 +28,7 @@ const editar = async (req, res) => {
 
     await professorFacade.editar(cpf, nome, status);
     await professorFacade.disponibilidade(cpf, seg, ter, qua, qui, sex);
-    res.status(201).send({mensagem: `Professor portador do CPF ${cpf} editado com sucesso!`})
+    res.status(201).send({ mensagem: `Professor portador do CPF ${cpf} editado com sucesso!` })
 }
 
 const consultar = async (req, res) => {
@@ -38,4 +38,4 @@ const consultar = async (req, res) => {
     res.status(200).send(resultado)
 }
 
-export {cadastrar, editar, consultar};
+export { cadastrar, editar, consultar };

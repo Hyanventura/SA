@@ -5,10 +5,12 @@ import bodyParser from 'body-parser';
 app.use(bodyParser.json());
 
 import professoresRoutes from "./routes/professores.mjs";
-import disciplinaRoutes from './routes/disciplinas.mjs';
+import disciplinasRoutes from './routes/disciplinas.mjs';
+import salaRoutes from './routes/salas.mjs';
 
-app.use('/professor', professoresRoutes)
-app.use('/disciplina', disciplinaRoutes)
+app.use('/professor', professoresRoutes);
+app.use('/disciplina', disciplinasRoutes);
+app.use('/sala', salaRoutes);
 
 
 app.listen(port, () =>{
