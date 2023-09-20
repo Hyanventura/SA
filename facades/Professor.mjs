@@ -59,6 +59,7 @@ export default class ProfessorFacade {
             const professor = resultado.rows.map(row => row.professor);
 
             let mensagem = `O professor ${professor[0]}, CPF=${cpf} está disponível nos dias: `
+
             for (let i = 0; i < diasDisponiveis.length; i++) {
                 mensagem = `${mensagem}\n${diasDisponiveis[i]}`
             }
@@ -87,7 +88,6 @@ export default class ProfessorFacade {
                     await this.client.query(comando)
                 }
             }
-
         } catch (erro) {
             console.error(erro)
             return erro
@@ -98,7 +98,6 @@ export default class ProfessorFacade {
         try {
             comando = `INSERT INTO disciplina_professores (cpf_professor, id_disciplina) VALUES (${cpf}, ${disciplina})`
             await this.client.query(comando)
-
         } catch (erro) {
             console.error(erro)
             return erro

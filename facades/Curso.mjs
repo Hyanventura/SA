@@ -2,7 +2,7 @@ import pg from "pg";
 import dotenv from "dotenv";
 dotenv.config();
 
-export default class DisciplinaFacade {
+export default class CursoFacade {
 
     constructor() {
         this.conectarDatabase();
@@ -15,30 +15,35 @@ export default class DisciplinaFacade {
 
     async cadastrar(nome) {
         try {
-            const comando = `INSERT INTO disciplinas(nome) VALUES ('${nome}')`;
+            const comando = `INSERT INTO cursos(nome) VALUES ('${nome}')`
             await this.client.query(comando);
         } catch (erro) {
             console.error(erro);
-            return erro;
+            return erro
         }
     }
 
     async editar(id, nome) {
         try {
-            const comando = `UPDATE disciplinas SET nome = '${nome}' where id = ${id}`;
+            const comando = `UPDATE cursos set nome = '${nome}' where id = ${id}`
             await this.client.query(comando);
         } catch (erro) {
             console.error(erro);
-            return erro;
+            return erro
         }
     }
 
-    async consultar() {
+    async consultar(id) {
         try {
-            const comando = `SELECT * FROM disciplinas`;
-            const resultado = await this.client.query(comando);
-            return resultado.rows
-            
+            if(id == 'todas' || id == 'todos'){
+                const comando = `SELECT * FROM cursos`;
+                const resultado = await this.client.query(comando);
+                return resultado.rows;
+            } else {
+                const comando = `SELECT * FROM cursos where id = ${id}`;
+                const resultado = await this.client.query(comando);
+                return resultado.rows;
+            }
         } catch (erro) {
             console.error(erro);
             return erro;
@@ -47,7 +52,7 @@ export default class DisciplinaFacade {
 
     async deletar(id) {
         try {
-            const comando = `DELETE FROM disciplinas WHERE id = ${id}`;
+            const comando = `DELETE FROM cursos WHERE id = ${id}`;
             await this.client.query(comando);
         } catch (erro) {
             console.error(erro);
