@@ -26,28 +26,47 @@ export default class ProfessorFacade {
 
     async editar(cpf, nome, status) {
         try {
-            const comando = `UPDATE professores SET nome = '${nome}', status = ${status} where cpf = ${cpf}`
-            await this.client.query(comando)
+            const comando = `UPDATE professores SET nome = '${nome}', status = ${status} where cpf = ${cpf}`;
+            await this.client.query(comando);
         } catch (erro) {
-            console.error(erro)
-            return erro
+            console.error(erro);
+            return erro;
         }
     }
 
     async consultar(cpf) {
         try {
             if (cpf == 'todos') {
-                const comando = `SELECT * FROM professores`
-                const resultado = await this.client.query(comando)
-                return resultado.rows
+                const comando = `SELECT * FROM professores`;
+                const resultado = await this.client.query(comando);
+                return resultado.rows;
             } else {
-                const comando = `SELECT * FROM professores where cpf = ${cpf}`
-                const resultado = await this.client.query(comando)
-                return resultado.rows
+                const comando = `SELECT * FROM professores where cpf = ${cpf}`;
+                const resultado = await this.client.query(comando);
+                return resultado.rows;
             }
         } catch (erro) {
-            console.error(erro)
-            return erro
+            console.error(erro);
+            return erro;
+        }
+    }
+
+    async consultarDisponibilidade(cpf) {
+        try {
+            const comando = `select dias_semana.nome as DIA_SEMANA, professores.nome as PROFESSOR from disponibilidade left join dias_semana on dias_semana.id = disponibilidade.id_dia_semana left join professores on professores.cpf = disponibilidade.cpf_professor where disponibilidade.cpf_professor = ${cpf}`;
+            const resultado = await this.client.query(comando);
+            const diasDisponiveis = resultado.rows.map(row => row.dia_semana);
+            const professor = resultado.rows.map(row => row.professor);
+
+            let mensagem = `O professor ${professor[0]}, CPF=${cpf} está disponível nos dias: `
+            for (let i = 0; i < diasDisponiveis.length; i++) {
+                mensagem = `${mensagem}\n${diasDisponiveis[i]}`
+            }
+
+            return mensagem;
+        } catch (erro) {
+            console.error(erro);
+            return erro;
         }
     }
 

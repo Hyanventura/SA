@@ -2,23 +2,6 @@
 
 
 
-// exports.sala = (req, res) => {
-//     const query = "SELECT * FROM salas"
-//     database.query(query).then(
-//         (resultado) => {
-//             res.status(200).send({ Salas : resultado.rows })
-          
-//         },
-//         (erro) => {
-//             res.status(500).send({ erro: erro })
-        
-//         }
-
-//     )
-// }
-
-
-
 // exports.turma = (req, res) => {
 //     const query = "SELECT * FROM turmas"
 //     database.query(query).then(

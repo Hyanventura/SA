@@ -38,4 +38,11 @@ const consultar = async (req, res) => {
     res.status(200).send(resultado)
 }
 
-export { cadastrar, editar, consultar };
+const consultarDisponibilidade = async (req, res) => {
+    const cpf = req.params.cpf;
+
+    const resultado = await professorFacade.consultarDisponibilidade(cpf)
+    res.status(200).send(resultado)
+}
+
+export { cadastrar, editar, consultar, consultarDisponibilidade };
