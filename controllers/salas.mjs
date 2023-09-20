@@ -6,7 +6,7 @@ const cadastrar = async (req, res) => {
     const cod = req.body.cod;
 
     await salaFacade.cadastrar(nome, cod);
-    res.status(201).send({ mensagem: `Sala '${nome}' de código ${cod} cadastrada com sucesso!` });
+    res.status(201).send(`Sala '${nome}' de código ${cod} cadastrada com sucesso!`);
 }
 
 const editar = async (req, res) => {
@@ -22,7 +22,6 @@ const consultar = async (req, res) => {
     const id = req.params.id;
 
     const resultado = await salaFacade.consultar(id);
-    console.log(resultado)
     res.status(200).send({salas: resultado})
 }
 
