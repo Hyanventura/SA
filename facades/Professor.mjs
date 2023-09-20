@@ -1,6 +1,7 @@
-import pg from "pg"
-import dotenv from "dotenv"
-dotenv.config()
+import pg from "pg";
+import xlsx from "xlsx";
+import dotenv from "dotenv";
+dotenv.config();
 
 export default class ProfessorFacade {
 
@@ -74,19 +75,19 @@ export default class ProfessorFacade {
     async disponibilidade(cpf, seg, ter, qua, qui, sex) {
         try {
             let diasSemana = [seg, ter, qua, qui, sex]
-            let id_dia_semana = 1;
+            let id_dia_semana = 2;
 
             const comandoDeletarDisponibilidade = `DELETE FROM disponibilidade where cpf_professor = (${cpf})`
             await this.client.query(comandoDeletarDisponibilidade)
 
             for (let i = 0; i < diasSemana.length; i++) {
-                id_dia_semana++;
                 console.log(id_dia_semana)
 
                 if (diasSemana[i] == 1) {
                     const comando = `INSERT INTO disponibilidade(cpf_professor, id_dia_semana) VALUES (${cpf}, ${id_dia_semana})`
                     await this.client.query(comando)
                 }
+                id_dia_semana++;
             }
         } catch (erro) {
             console.error(erro)
@@ -102,6 +103,40 @@ export default class ProfessorFacade {
             console.error(erro)
             return erro
         }
+    }
+
+    async importarCSV(filePath) {
+        const workbook = xlsx.readFile(filePath);
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const data = xlsx.utils.sheet_to_json(sheet);
+
+        try {
+            //for row of data vai percorrer todos os objetos armazenados no array data, onde ele consegue inserir as informações de acordo com os atributos de cada objeto
+            for (const row of data) {
+                const comando = `INSERT INTO professores (cpf, nome, status) VALUES (${row.cpf}, '${row.nome}', ${row.status})`;
+                await this.client.query(comando)
+
+                let id_dia_semana = 2;
+                let diasSemana = [row.seg, row.ter, row.qua, row.qui, row.sex]
+
+                for (let i = 0; i < diasSemana.length; i++) {
+                    console.log(id_dia_semana)
+
+                    if (diasSemana[i] == 1) {
+                        const comandoDisponibilidade = `INSERT INTO disponibilidade(cpf_professor, id_dia_semana) VALUES (${row.cpf}, ${id_dia_semana})`
+                        await this.client.query(comandoDisponibilidade)
+                    }
+                    id_dia_semana++;
+                }
+            }
+            return data;
+        } catch (erro) {
+            console.error(erro);
+            return erro;
+        }
+
+
     }
 
 

@@ -45,4 +45,14 @@ const consultarDisponibilidade = async (req, res) => {
     res.status(200).send(resultado)
 }
 
-export { cadastrar, editar, consultar, consultarDisponibilidade };
+const importarCSV = async (req, res) => {
+    const filePath = req.body.file_path;
+    //para usar essa função e garantir que não vai dar erros deve ser escolhido um arquivo .csv, o caminho no body deve ser digitado com '/' no lugar da '\'
+    //por exemplo: C:\users\ramon\desktop\arquivo.xlsx INCORRETO
+    //             C:/users/ramon/desktop/arquivo.csv CORRETO 
+
+    const data = await professorFacade.importarCSV(filePath);
+    res.status(201).send({InformaçõesImportadas: data})
+}
+
+export { cadastrar, editar, consultar, consultarDisponibilidade, importarCSV };
