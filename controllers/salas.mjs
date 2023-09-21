@@ -32,4 +32,11 @@ const deletar = async (req, res) => {
     res.status(200).send(`Sala ID=${id} excluída com sucesso.`);
 }
 
-export { cadastrar, editar, consultar, deletar };
+const importarCSV = async (req, res) => {
+    const filePath = req.body.file_path;
+
+    const data = await salaFacade.importarCSV(filePath);
+    res.status(200).send({InformaçõesImportadas: data})
+}
+
+export { cadastrar, editar, consultar, deletar, importarCSV };

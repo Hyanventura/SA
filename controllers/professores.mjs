@@ -12,7 +12,7 @@ const cadastrar = async (req, res) => {
     const sex = req.body.sex;
 
     await professorFacade.cadastrar(cpf, nome, status);
-    await professorFacade.disponibilidade(cpf, seg, ter, qua, qui, sex);
+    await professorFacade.cadastrarDisponibilidade(cpf, seg, ter, qua, qui, sex);
     res.status(201).send({ mensagem: `Professor ${nome} cadastrado com sucesso!` });
 }
 
@@ -27,7 +27,7 @@ const editar = async (req, res) => {
     const sex = req.body.sex;
 
     await professorFacade.editar(cpf, nome, status);
-    await professorFacade.disponibilidade(cpf, seg, ter, qua, qui, sex);
+    await professorFacade.cadastrarDisponibilidade(cpf, seg, ter, qua, qui, sex);
     res.status(201).send({ mensagem: `Professor portador do CPF ${cpf} editado com sucesso!` })
 }
 
