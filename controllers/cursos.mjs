@@ -30,4 +30,11 @@ const deletar = async (req, res) => {
     res.status(200).send(`Curso ID=${id} excluído com sucesso.`)
 }
 
-export { cadastrar, editar, consultar, deletar };
+const importarCSV = async (req, res) => {
+    const filePath = req.body.file_path;
+
+    const data = await cursoFacade.importarCSV(filePath);
+    res.status(200).send({InformaçõesImportadas: data})
+}
+
+export { cadastrar, editar, consultar, deletar, importarCSV };
