@@ -4,7 +4,8 @@ import * as controller from '../controllers/disciplinas.mjs';
 
 router.post('/cadastrar', controller.cadastrar);
 router.put('/editar/:id', controller.editar);
-router.get('/', controller.consultar);
+router.get('/consultar', controller.consultar);
 router.delete('/deletar/:id', controller.deletar);
+router.post('/importar_csv', controller.importarCSV)
 
 export default router;
