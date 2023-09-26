@@ -129,6 +129,24 @@ export default class ProfessorFacade {
         }
     }
 
+    async consultarDisciplinasDoProfessor(cpf) {
+        try {
+            this.conectarDatabase();
+            
+            const comando = `select disciplina_professores.cpf_professor, professores.nome as PROFESSOR, disciplinas.nome as DISCIPLINA from disciplina_professores left join professores on professores.cpf = disciplina_professores.cpf_professor left join disciplinas on disciplinas.id = disciplina_professores.id_disciplina where disciplina_professores.cpf_professor = ${cpf}`;
+            const resultado = await this.client.query(comando);
+            const disciplinas = resultado.rows.map(row => row.disciplina);
+
+            console.log(`- consultarDisciplinasDoProfessor(${cpf}) -- facades/Professor.mjs`);
+            return disciplinas;
+        } catch (erro) {
+            console.error(erro);
+            return erro;
+        } finally {
+            this.closeDatabase()
+        }
+    }
+
     async cadastrarDisciplina(cpf, disciplina) {
         try {
             this.conectarDatabase()

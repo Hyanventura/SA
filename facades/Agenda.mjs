@@ -20,28 +20,66 @@ export default class AgendaFacade {
     }
 
     async agendarAula(data, id_curso, id_turma, cpf_professor, id_sala) {
-        const professorEstaDisponivel = await this.verificarDisponibilidadeDoProfessor(data, cpf_professor)
+        const professorEstaDisponivel = await this.verificarDisponibilidadeDoProfessor(data, cpf_professor);
+        const turmaFazParteDoCurso = await this.verificarSeTurmaFazParteDoCurso(id_curso, id_turma);
 
-        if(professorEstaDisponivel) {
-            return 'sua aula foi agendada com sucesso'
-        } else {
+        if (!professorEstaDisponivel) {
             return 'professor não possui disponibilidade para o dia selecionado'
+        } else if (!turmaFazParteDoCurso) {
+            return 'turma não faz o curso selecionado'
+        } else {
+            return 'aula agendada com sucesso'
         }
     }
 
     async verificarDisponibilidadeDoProfessor(data, cpf_professor) {
-        data = new Date(data)
-        const dia_semana = dias_da_semana[data.getDay()]
+        try {
+            data = new Date(data)
+            const dia_semana = dias_da_semana[data.getDay()]
 
-        const disponivel = await professorFacade.consultarDisponibilidade(cpf_professor)
+            const disponivel = await professorFacade.consultarDisponibilidade(cpf_professor)
 
-        const estaDisponivelNoDia = ([disponivel.find((dia) => dia == dia_semana)]) 
+            const estaDisponivelNoDia = ([disponivel.find((dia) => dia == dia_semana)])
 
-        if (estaDisponivelNoDia[0] == undefined) {
-            return false;
-        } else {
-            return true;
+            if (estaDisponivelNoDia[0] == undefined) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (erro) {
+            console.error(erro);
+            return erro;
+        }
+
+    }
+
+    async verificarSeTurmaFazParteDoCurso(id_curso, id_turma) {
+        try {
+            this.conectarDatabase();
+
+            const comando = `SELECT id_curso FROM turmas WHERE turmas.id = ${id_turma}`;
+            const resultado = (await this.client.query(comando)).rows;
+
+            const cursos = resultado.map(row => row.id_curso)
+
+            const cursosDaTurma = ([cursos.find((curso) => curso == id_curso)]);
+
+            if (cursosDaTurma[0] == undefined) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (erro) {
+            console.error(erro);
+            return erro;
+        } finally {
+            this.closeDatabase()
         }
     }
 
+
+    async closeDatabase() {
+        await this.client.end()
+        console.log('- Desconectado do BD -- facades/Agenda.mjs')
+    }
 }
