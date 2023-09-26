@@ -80,16 +80,16 @@ export default class ProfessorFacade {
             const comando = `select dias_semana.nome as DIA_SEMANA, professores.nome as PROFESSOR from disponibilidade left join dias_semana on dias_semana.id = disponibilidade.id_dia_semana left join professores on professores.cpf = disponibilidade.cpf_professor where disponibilidade.cpf_professor = ${cpf}`;
             const resultado = await this.client.query(comando);
             const diasDisponiveis = resultado.rows.map(row => row.dia_semana);
-            const professor = resultado.rows.map(row => row.professor);
+            // const professor = resultado.rows.map(row => row.professor);
 
-            let mensagem = `O professor ${professor[0]}, CPF=${cpf} está disponível nos dias: `
+            // let mensagem = `O professor ${professor[0]}, CPF=${cpf} está disponível nos dias: `
 
-            for (let i = 0; i < diasDisponiveis.length; i++) {
-                mensagem = `${mensagem}\n${diasDisponiveis[i]}`
-            }
+            // for (let i = 0; i < diasDisponiveis.length; i++) {
+            //     mensagem = `${mensagem}\n${diasDisponiveis[i]}`
+            // }
 
             console.log(`- consultarDisponibilidade(${cpf}) -- facades/Professor.mjs`)
-            return mensagem;
+            return (diasDisponiveis);
         } catch (erro) {
             console.error(erro);
             return erro;

@@ -9,12 +9,14 @@ import disciplinasRoutes from './routes/disciplinas.mjs';
 import salaRoutes from './routes/salas.mjs';
 import turmaRoutes from './routes/turmas.mjs';
 import cursoRoutes from './routes/cursos.mjs';
+import agendaRoutes from './routes/agenda.mjs'
 
 app.use('/professor', professoresRoutes);
 app.use('/disciplina', disciplinasRoutes);
 app.use('/sala', salaRoutes);
 app.use('/turma', turmaRoutes);
 app.use('/curso', cursoRoutes);
+app.use('/agenda', agendaRoutes);
 
 
 app.listen(port, () =>{
