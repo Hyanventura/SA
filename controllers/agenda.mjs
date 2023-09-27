@@ -9,7 +9,7 @@ const agendarAula = async (req, res) => {
     const id_sala = req.body.id_sala;
 
     const resultado = await agendaFacade.agendarAula(data, id_curso, id_turma, cpf_professor, id_sala);
-    res.status(200).send({ disponivel: resultado })
+    res.status(200).send({ resultado: resultado })
 }
 
 export { agendarAula }
