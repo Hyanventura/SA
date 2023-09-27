@@ -61,11 +61,16 @@ export default class AgendaFacade {
             console.log(`- verificarDisponibilidadeDoProfessor(${data}, ${cpf_professor}) -- facades/Agenda.mjs`);
 
             const dataSelecionada = new Date(data)
-            const dia_semana = dias_da_semana[dataSelecionada.getDay()]
+            const dia_semana = dias_da_semana[dataSelecionada.getDay()] 
+            //função getDay() só funciona quando é usada em um Date(), por isso acima coloquei esse Date(data) na dataSelecionada
+            //é utilizada para buscar no array dias_da_semana[] e verificar o dia da semana da data selecionada
 
             const disponivel = await professorFacade.consultarDisponibilidade(cpf_professor)
 
             const estaDisponivelNoDia = ([disponivel.find((dia) => dia == dia_semana)])
+            //aqui ele busca no array disponivel[] se tem disponibilidade para o dia da semana selecionado anteriormente
+            //se tiver disponibilidade vai retornar estaDisponivelNoDia['Quarta-Feira'] por exemplo
+            //se não estiver disponivel vai retornar estaDisponivelNoDia[ undefined ]
 
             if (estaDisponivelNoDia[0] == undefined) {
                 return false;
@@ -116,9 +121,9 @@ export default class AgendaFacade {
 
             const salasUsadasNoDia = resultado.map(row => row.id_sala)
 
-            const estaOcupadaNoDia = ([salasUsadasNoDia.find((sala) => sala == id_sala)]);
+            const estaDisponivelNoDia = ([salasUsadasNoDia.find((sala) => sala == id_sala)]);
 
-            if (estaOcupadaNoDia[0] == undefined) {
+            if (estaDisponivelNoDia[0] == undefined) {
                 return true;
             } else {
                 return false;
