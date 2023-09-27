@@ -1,6 +1,8 @@
 import pg from "pg";
 import xlsx from "xlsx";
 import dotenv from "dotenv";
+import DisciplinaFacade from "./Disciplina.mjs";
+const disciplinaFacade = new DisciplinaFacade();
 dotenv.config();
 
 export default class ProfessorFacade {
@@ -143,23 +145,28 @@ export default class ProfessorFacade {
             console.error(erro);
             return erro;
         } finally {
-            this.closeDatabase()
+            this.closeDatabase();
         }
     }
 
-    async cadastrarDisciplina(cpf, disciplina) {
+    async cadastrarDisciplinas(cpf, disciplinas) {
         try {
-            this.conectarDatabase()
+            this.conectarDatabase();
 
-            comando = `INSERT INTO disciplina_professores (cpf_professor, id_disciplina) VALUES (${cpf}, ${disciplina})`
-            await this.client.query(comando)
+            const comandoDeletarDisciplina = `DELETE FROM disciplina_professores WHERE cpf_professor = ${cpf}`;
+            await this.client.query(comandoDeletarDisciplina);
 
-            console.log(`- cadastrarDisciplina(${cpf}, ${disciplina}) -- facades/Professor.mjs`)
+            for (let i = 0; i < disciplinas.length; i++) {
+                const comando = `INSERT INTO disciplina_professores (cpf_professor, id_disciplina) VALUES (${cpf}, ${disciplinas[i]})`;
+                await this.client.query(comando);
+            }
+
+            console.log(`- cadastrarDisciplina(${cpf}, [${disciplinas}]) -- facades/Professor.mjs`);
         } catch (erro) {
-            console.error(erro)
-            return erro
+            console.error(erro);
+            return erro;
         } finally {
-            this.closeDatabase()
+            this.closeDatabase();
         }
     }
 

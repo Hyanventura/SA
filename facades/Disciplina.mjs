@@ -52,10 +52,10 @@ export default class DisciplinaFacade {
             this.conectarDatabase();
 
             const comando = `SELECT * FROM disciplinas`;
-            const resultado = await this.client.query(comando);
+            const resultado = (await this.client.query(comando)).rows;
 
             console.log(`- consultar() -- facades/Disciplina.mjs`)
-            return resultado.rows
+            return resultado
             
         } catch (erro) {
             console.error(erro);
