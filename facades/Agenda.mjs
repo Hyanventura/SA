@@ -19,12 +19,13 @@ export default class AgendaFacade {
         console.log('- Conectado ao BD -- facades/Agenda.mjs')
     }
 
-    async agendarAula(data, id_curso, id_turma, cpf_professor, id_sala) {
-        console.log(`- agendarAula(${data}, ${id_curso}, ${id_turma}, ${cpf_professor}, ${id_sala}) -- facades/Agenda.mjs`);
+    async agendarAula(data, id_curso, id_turma, cpf_professor, id_sala, id_disciplina) {
+        console.log(`- agendarAula(${data}, ${id_curso}, ${id_turma}, ${cpf_professor}, ${id_sala}, ${id_disciplina}) -- facades/Agenda.mjs`);
 
         const professorEstaDisponivel = await this.verificarDisponibilidadeDoProfessor(data, cpf_professor);
         const turmaFazParteDoCurso = await this.verificarSeTurmaFazParteDoCurso(id_curso, id_turma);
         const salaEstaDisponivel = await this.verificarDisponibilidadeDaSalaNoDia(data, id_sala);
+        const professorLecionaADisciplina = await this.verificarSeProfessorDaAulaParaADisciplina(cpf_professor, id_disciplina);
 
         try {
             this.conectarDatabase()
@@ -38,13 +39,18 @@ export default class AgendaFacade {
             } else if (!salaEstaDisponivel) {
                 console.error(`-- ERRO -- SALA JÁ ESTÁ OCUPADA NO DIA SELECIONADO -- facades/Agenda.mjs`)
                 return 'sala já está ocupada no dia selecionado'
+            } else if (!professorLecionaADisciplina) {
+                console.error(`-- ERRO -- PROFESSOR NÃO LECIONA ESSA DISCIPLINA`);
+                return 'professor não dá aula para a disciplina selecionada'
             } else {
-                const comando = `INSERT INTO agenda (data, id_curso, id_turma, cpf_professor, id_sala) VALUES ('${data}', ${id_curso}, ${id_turma}, ${cpf_professor}, ${id_sala})`
+                const comando = `INSERT INTO agenda (data, id_curso, id_turma, cpf_professor, id_sala, id_disciplina) VALUES ('${data}', ${id_curso}, ${id_turma}, ${cpf_professor}, ${id_sala}, ${id_disciplina})`
                 await this.client.query(comando)
-    
+
                 console.log(`- função agendarAula() concluída com sucesso.`)
                 return `aula agendada para a data ${data} com sucesso`
             }
+
+
 
         } catch (erro) {
             console.error(erro);
@@ -53,7 +59,7 @@ export default class AgendaFacade {
             this.closeDatabase();
         }
 
-        
+
     }
 
     async verificarDisponibilidadeDoProfessor(data, cpf_professor) {
@@ -61,7 +67,7 @@ export default class AgendaFacade {
             console.log(`- verificarDisponibilidadeDoProfessor(${data}, ${cpf_professor}) -- facades/Agenda.mjs`);
 
             const dataSelecionada = new Date(data)
-            const dia_semana = dias_da_semana[dataSelecionada.getDay()] 
+            const dia_semana = dias_da_semana[dataSelecionada.getDay()]
             //função getDay() só funciona quando é usada em um Date(), por isso acima coloquei esse Date(data) na dataSelecionada
             //é utilizada para buscar no array dias_da_semana[] e verificar o dia da semana da data selecionada
 
@@ -119,7 +125,7 @@ export default class AgendaFacade {
             const comando = `SELECT data, id_sala FROM agenda WHERE data = '${data}'`;
             const resultado = (await this.client.query(comando)).rows;
 
-            const salasUsadasNoDia = resultado.map(row => row.id_sala)
+            const salasUsadasNoDia = resultado.map(row => row.id_sala);
 
             const estaDisponivelNoDia = ([salasUsadasNoDia.find((sala) => sala == id_sala)]);
 
@@ -137,9 +143,41 @@ export default class AgendaFacade {
         }
     }
 
+    async verificarSeProfessorDaAulaParaADisciplina(cpf_professor, id_disciplina) {
+        try {
+            this.conectarDatabase();
+
+            console.log(`- verificarSeProfessorDaAulaParaADisciplina(${cpf_professor}, ${id_disciplina}) -- facades/Agenda.mjs`);
+
+            const consultarDisciplinasDoProfessor = async () => {
+                const comando = `SELECT id_disciplina FROM disciplina_professores WHERE cpf_professor = ${cpf_professor}`;
+                const resultado = (await this.client.query(comando)).rows;
+                const disciplinas = resultado.map(row => row.id_disciplina);
+
+                return disciplinas;
+            }
+
+            const disciplinasDoProfessor = await consultarDisciplinasDoProfessor();
+
+            const professorLecionaADisciplina = ([disciplinasDoProfessor.find((disciplina) => disciplina == id_disciplina)]);
+
+            if (professorLecionaADisciplina[0] == undefined) {
+                return false;
+            } else {
+                return true;
+            }
+
+        } catch (erro) {
+            console.error(erro);
+            return erro;
+        } finally {
+            this.closeDatabase();
+        }
+    }
+
 
     async closeDatabase() {
-        await this.client.end()
-        console.log('- Desconectado do BD -- facades/Agenda.mjs')
+        await this.client.end();
+        console.log('- Desconectado do BD -- facades/Agenda.mjs');
     }
 }
