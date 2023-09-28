@@ -3,17 +3,25 @@ const cursoFacade = new CursoFacade();
 
 const cadastrar = async (req, res) => {
     const nome = req.body.nome;
+    const cod = req.body.cod;
+    const disciplinas = req.body.disciplinas;
+    const qtd_aulas_semana = req.body.qtd_aulas_semana;
 
-    await cursoFacade.cadastrar(nome);
-    res.status(201).send(`Curso '${nome}' cadastrado com sucesso!`)
+    await cursoFacade.cadastrar(nome, cod);
+    await cursoFacade.cadastrarDisciplinas(cod, disciplinas, qtd_aulas_semana);
+    res.status(201).send(`Curso '${nome}' cadastrado com código '${cod}' com sucesso!`)
 }
 
 const editar = async (req, res) => {
     const id = req.params.id;
     const nome = req.body.nome;
+    const cod = req.body.cod;
+    const disciplinas = req.body.disciplinas;
+    const qtd_aulas_semana = req.body.qtd_aulas_semana;
 
-    await cursoFacade.editar(id, nome);
-    res.status(201).send(`Curso ID=${id} alterado com sucesso!\nNOME=${nome}`)
+    await cursoFacade.editar(id, nome, cod);
+    await cursoFacade.cadastrarDisciplinas(cod, disciplinas, qtd_aulas_semana);
+    res.status(201).send(`Curso ID=${id} alterado com sucesso!\nNOME=${nome}\nCOD=${cod}`)
 }
 
 const consultar = async (req, res) => {

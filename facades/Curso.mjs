@@ -16,11 +16,11 @@ export default class CursoFacade {
         console.log('- Conectado ao BD -- facades/Curso.mjs')
     }
 
-    async cadastrar(nome) {
+    async cadastrar(nome, cod) {
         try {
             this.conectarDatabase();
 
-            const comando = `INSERT INTO cursos(nome) VALUES ('${nome}')`
+            const comando = `INSERT INTO cursos(nome, cod) VALUES ('${nome}', ${cod})`
             await this.client.query(comando);
 
             console.log(`- cadastrar(${nome}) -- facades/Curso.mjs`)
@@ -32,11 +32,34 @@ export default class CursoFacade {
         }
     }
 
-    async editar(id, nome) {
+    async cadastrarDisciplinas(cod_curso, disciplinas, qtd_aulas_semana) {
         try {
             this.conectarDatabase();
 
-            const comando = `UPDATE cursos set nome = '${nome}' where id = ${id}`
+            const comandoDeletarDisciplina = `DELETE FROM disciplina_cursos WHERE id_curso = (select id from cursos where cod = ${cod_curso})`;
+            await this.client.query(comandoDeletarDisciplina);
+
+            for (let i = 0; i < disciplinas.length; i++) {
+                const comando = `INSERT INTO disciplina_cursos (id_curso, id_disciplina, qtd_aulas_semana) VALUES ((select id from cursos where cod = ${cod_curso}), ${disciplinas[i]}, ${qtd_aulas_semana[i]})`;
+                await this.client.query(comando);
+
+                console.log(`- inserida disciplina ID=${disciplinas[i]} com ${qtd_aulas_semana[i]} aula(s) por semana para o curso COD=${cod_curso} -- facades/Curso.mjs`)
+            }
+
+            console.log(`- cadastrarDisciplina(${cod_curso}, [${disciplinas}]) -- facades/Curso.mjs`);
+        } catch (erro) {
+            console.error(erro);
+            return erro;
+        } finally {
+            this.closeDatabase();
+        }
+    }
+
+    async editar(id, nome, cod) {
+        try {
+            this.conectarDatabase();
+
+            const comando = `UPDATE cursos set nome = '${nome}', cod = ${cod} where id = ${id}`
             await this.client.query(comando);
 
             console.log(`- editar(${id}, ${nome}) -- facades/Curso.mjs`)
