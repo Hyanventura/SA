@@ -79,16 +79,26 @@ export default class ProfessorFacade {
         try {
             this.conectarDatabase()
 
-            const comando = `select dias_semana.nome as DIA_SEMANA, professores.nome as PROFESSOR from disponibilidade left join dias_semana on dias_semana.id = disponibilidade.id_dia_semana left join professores on professores.cpf = disponibilidade.cpf_professor where disponibilidade.cpf_professor = ${cpf}`;
-            const resultado = await this.client.query(comando);
-            const diasDisponiveis = resultado.rows.map(row => row.dia_semana);
-            // const professor = resultado.rows.map(row => row.professor);
+            const comando = `select dias_semana.nome as DIA_SEMANA, professores.nome as PROFESSOR, disponibilidade.qtd_dias_disponiveis as QUANTIDADE from disponibilidade left join dias_semana on dias_semana.id = disponibilidade.id_dia_semana left join professores on professores.cpf = disponibilidade.cpf_professor where disponibilidade.cpf_professor = ${cpf}`;
+            const resultado = (await this.client.query(comando)).rows;
+            const diasDisponiveis = resultado.map(row => row.dia_semana);
+            const qtdDiasDisponiveis = resultado.map(row => row.quantidade);
+            // const professor = resultado.map(row => row.professor);
 
             // let mensagem = `O professor ${professor[0]}, CPF=${cpf} está disponível nos dias: `
 
             // for (let i = 0; i < diasDisponiveis.length; i++) {
             //     mensagem = `${mensagem}\n${diasDisponiveis[i]}`
             // }
+
+            for (let i = 0; i < resultado.length; i++) {
+                if ((qtdDiasDisponiveis[i] > 0) && (qtdDiasDisponiveis[i] < 6)) {
+                    return qtdDiasDisponiveis;
+                } else if (diasDisponiveis[i] > 1) {
+                    return diasDisponiveis;
+                }
+
+            }
 
             console.log(`- consultarDisponibilidade(${cpf}) -- facades/Professor.mjs`)
             return (diasDisponiveis);
@@ -113,7 +123,7 @@ export default class ProfessorFacade {
             console.log(`- cadastrarDisponibilidade(${cpf}, ${seg}, ${ter}, ${qua}, ${qui}, ${sex}, ${qtd}) -- facades/Professor.mjs`)
             for (let i = 0; i < diasSemana.length; i++) {
 
-                if ((diasSemana[i] == 1) && (diasSemana[5] == 0)) {
+                if ((diasSemana[i] == 1) && (diasSemana[5] == undefined)) {
                     const comando = `INSERT INTO disponibilidade(cpf_professor, id_dia_semana) VALUES (${cpf}, ${id_dia_semana})`;
                     await this.client.query(comando);
 
