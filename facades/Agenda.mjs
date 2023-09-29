@@ -66,22 +66,28 @@ export default class AgendaFacade {
         try {
             console.log(`- verificarDisponibilidadeDoProfessor(${data}, ${cpf_professor}) -- facades/Agenda.mjs`);
 
-            const dataSelecionada = new Date(data)
-            const dia_semana = dias_da_semana[dataSelecionada.getDay()]
+            const dataSelecionada = new Date(data);
+            const dia_semana = dias_da_semana[dataSelecionada.getDay()];
             //função getDay() só funciona quando é usada em um Date(), por isso acima coloquei esse Date(data) na dataSelecionada
             //é utilizada para buscar no array dias_da_semana[] e verificar o dia da semana da data selecionada
 
-            const disponivel = await professorFacade.consultarDisponibilidade(cpf_professor)
+            const disponivel = await professorFacade.consultarDisponibilidade(cpf_professor);
 
-            const estaDisponivelNoDia = ([disponivel.find((dia) => dia == dia_semana)])
+            const estaDisponivelNoDia = ([disponivel.find((dia) => dia == dia_semana)]);
             //aqui ele busca no array disponivel[] se tem disponibilidade para o dia da semana selecionado anteriormente
             //se tiver disponibilidade vai retornar estaDisponivelNoDia['Quarta-Feira'] por exemplo
             //se não estiver disponivel vai retornar estaDisponivelNoDia[ undefined ]
 
-            if (estaDisponivelNoDia[0] == undefined) {
-                return false;
-            } else {
+            //vai retornar TRUE:
+            //caso o professor tenha mais de um dia disponivel em qtd_dias_disponiveis
+            //se a data inserida na requisição for num dia da semana que ele esteja disponível
+
+            //vai retornar FALSE:
+            //caso não seja um dia da semana que ele dê aula
+            if (parseInt(disponivel[0]) > 0 || estaDisponivelNoDia[0] != undefined) {
                 return true;
+            } else if (estaDisponivelNoDia[0] == undefined) {
+                return false;
             }
         } catch (erro) {
             console.error(erro);
