@@ -10,10 +10,11 @@ const cadastrar = async (req, res) => {
     const qua = req.body.qua;
     const qui = req.body.qui;
     const sex = req.body.sex;
+    const qtd = req.body.qtd;
     const disciplinas = req.body.disciplinas;
 
     await professorFacade.cadastrar(cpf, nome, status);
-    await professorFacade.cadastrarDisponibilidade(cpf, seg, ter, qua, qui, sex);
+    await professorFacade.cadastrarDisponibilidade(cpf, seg, ter, qua, qui, sex, qtd);
     await professorFacade.cadastrarDisciplinas(cpf, disciplinas);
     res.status(201).send({ mensagem: `Professor ${nome} cadastrado com sucesso!` });
 }
@@ -27,10 +28,11 @@ const editar = async (req, res) => {
     const qua = req.body.qua;
     const qui = req.body.qui;
     const sex = req.body.sex;
+    const qtd = req.body.qtd;
     const disciplinas = req.body.disciplinas;
 
     await professorFacade.editar(cpf, nome, status);
-    await professorFacade.cadastrarDisponibilidade(cpf, seg, ter, qua, qui, sex);
+    await professorFacade.cadastrarDisponibilidade(cpf, seg, ter, qua, qui, sex, qtd);
     await professorFacade.cadastrarDisciplinas(cpf, disciplinas);
     res.status(201).send({ mensagem: `Professor portador do CPF ${cpf} editado com sucesso!` })
 }

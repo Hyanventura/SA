@@ -100,41 +100,47 @@ export default class ProfessorFacade {
         }
     }
 
-    async cadastrarDisponibilidade(cpf, seg, ter, qua, qui, sex) {
+    async cadastrarDisponibilidade(cpf, seg, ter, qua, qui, sex, qtd) {
         try {
-            this.conectarDatabase()
+            this.conectarDatabase();
 
-            let diasSemana = [seg, ter, qua, qui, sex]
+            let diasSemana = [seg, ter, qua, qui, sex, qtd];
             let id_dia_semana = 2;
 
-            const comandoDeletarDisponibilidade = `DELETE FROM disponibilidade where cpf_professor = (${cpf})`
-            await this.client.query(comandoDeletarDisponibilidade)
+            const comandoDeletarDisponibilidade = `DELETE FROM disponibilidade where cpf_professor = (${cpf})`;
+            await this.client.query(comandoDeletarDisponibilidade);
 
-            console.log(`- cadastrarDisponibilidade(${cpf}, ${seg}, ${ter}, ${qua}, ${qui}, ${sex}) -- facades/Professor.mjs`)
+            console.log(`- cadastrarDisponibilidade(${cpf}, ${seg}, ${ter}, ${qua}, ${qui}, ${sex}, ${qtd}) -- facades/Professor.mjs`)
             for (let i = 0; i < diasSemana.length; i++) {
 
-                if (diasSemana[i] == 1) {
-                    const comando = `INSERT INTO disponibilidade(cpf_professor, id_dia_semana) VALUES (${cpf}, ${id_dia_semana})`
-                    await this.client.query(comando)
+                if ((diasSemana[i] == 1) && (diasSemana[5] == 0)) {
+                    const comando = `INSERT INTO disponibilidade(cpf_professor, id_dia_semana) VALUES (${cpf}, ${id_dia_semana})`;
+                    await this.client.query(comando);
 
                     console.log(`- cadastrada disponibilidade - ${cpf}, ${id_dia_semana}`)
+
+                } else if ((diasSemana[5] > 0) && (diasSemana[5] < 6) && (i == 5)) {
+                    const comando = `INSERT INTO disponibilidade(cpf_professor, qtd_dias_disponiveis) VALUES (${cpf}, ${qtd})`;
+                    await this.client.query(comando);
+
+                    console.log(`- cadastrada disponibilidade - ${cpf}, ${qtd} dias por semana`)
                 }
                 id_dia_semana++;
             }
 
-            
+
         } catch (erro) {
-            console.error(erro)
+            console.error(erro);
             return erro
         } finally {
-            this.closeDatabase()
+            this.closeDatabase();
         }
     }
 
     async consultarDisciplinasDoProfessor(cpf) {
         try {
             this.conectarDatabase();
-            
+
             const comando = `select disciplina_professores.cpf_professor, professores.nome as PROFESSOR, disciplinas.nome as DISCIPLINA from disciplina_professores left join professores on professores.cpf = disciplina_professores.cpf_professor left join disciplinas on disciplinas.id = disciplina_professores.id_disciplina where disciplina_professores.cpf_professor = ${cpf}`;
             const resultado = await this.client.query(comando);
             const disciplinas = resultado.rows.map(row => row.disciplina);
