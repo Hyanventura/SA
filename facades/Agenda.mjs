@@ -71,7 +71,7 @@ export default class AgendaFacade {
             //função getDay() só funciona quando é usada em um Date(), por isso acima coloquei esse Date(data) na dataSelecionada
             //é utilizada para buscar no array dias_da_semana[] e verificar o dia da semana da data selecionada
 
-            const disponibilidade = await professorFacade.consultarDisponibilidade(cpf_professor);
+            let disponibilidade = await professorFacade.consultarDisponibilidade(cpf_professor);
 
             const verificarTipoDeDisponibilidade = async () => {
                 if (Number.isInteger(parseInt(disponibilidade[0]))) {
