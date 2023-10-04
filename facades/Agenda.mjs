@@ -16,7 +16,7 @@ export default class AgendaFacade {
     async conectarDatabase() {
         this.client = new pg.Client(process.env.DATABASE);
         await this.client.connect();
-        console.log('- Conectado ao BD -- facades/Agenda.mjs')
+        // console.log('- Conectado ao BD -- facades/Agenda.mjs')
     }
 
     async agendarAula(data, id_curso, id_turma, cpf_professor, id_sala, id_disciplina) {
@@ -26,28 +26,32 @@ export default class AgendaFacade {
         const turmaFazParteDoCurso = await this.verificarSeTurmaFazParteDoCurso(id_curso, id_turma);
         const salaEstaDisponivel = await this.verificarDisponibilidadeDaSalaNoDia(data, id_sala);
         const professorLecionaADisciplina = await this.verificarSeProfessorDaAulaParaADisciplina(cpf_professor, id_disciplina);
+        const professorJaTemAulaNoDia = await this.verificarSeProfessorJaTemAulaNoDia(cpf_professor, data);
 
         try {
-            this.conectarDatabase()
+            this.conectarDatabase();
 
             if (!professorEstaDisponivel) {
-                console.error(`-- ERRO -- PROFESSOR NÃO POSSUI DISPONIBILIDADE PARA O DIA SELECIONADO OU EXCEDEU LIMITE DE AULAS DISPONÍVEIS POR SEMANA -- facades/Agenda.mjs`)
-                return 'professor não possui disponibilidade para o dia selecionado ou excedeu limite de aulas disponíveis por semana'
+                console.error(`-- ERRO -- PROFESSOR NÃO POSSUI DISPONIBILIDADE PARA O DIA SELECIONADO OU EXCEDEU LIMITE DE AULAS DISPONÍVEIS POR SEMANA -- facades/Agenda.mjs`);
+                return 'professor não possui disponibilidade para o dia selecionado ou excedeu limite de aulas disponíveis por semana';
             } else if (!turmaFazParteDoCurso) {
-                console.error(`-- ERRO -- TURMA NÃO FAZ O CURSO SELECIONADO -- facades/Agenda.mjs`)
-                return 'turma não faz o curso selecionado'
+                console.error(`-- ERRO -- TURMA NÃO FAZ O CURSO SELECIONADO -- facades/Agenda.mjs`);
+                return 'turma não faz o curso selecionado';
             } else if (!salaEstaDisponivel) {
-                console.error(`-- ERRO -- SALA JÁ ESTÁ OCUPADA NO DIA SELECIONADO -- facades/Agenda.mjs`)
-                return 'sala já está ocupada no dia selecionado'
+                console.error(`-- ERRO -- SALA JÁ ESTÁ OCUPADA NO DIA SELECIONADO -- facades/Agenda.mjs`);
+                return 'sala já está ocupada no dia selecionado';
             } else if (!professorLecionaADisciplina) {
                 console.error(`-- ERRO -- PROFESSOR NÃO LECIONA ESSA DISCIPLINA`);
-                return 'professor não dá aula para a disciplina selecionada'
+                return 'professor não dá aula para a disciplina selecionada';
+            }else if(!professorJaTemAulaNoDia) {
+                console.error(`-- ERRO -- PROFESSOR JÁ TEM AULA MARCADA PARA O DIA SELECIONADO`);
+                return 'professor já tem aula marcada para o dia selecionado';
             } else {
-                const comando = `INSERT INTO agenda (data, id_curso, id_turma, cpf_professor, id_sala, id_disciplina) VALUES ('${data}', ${id_curso}, ${id_turma}, ${cpf_professor}, ${id_sala}, ${id_disciplina})`
-                await this.client.query(comando)
+                const comando = `INSERT INTO agenda (data, id_curso, id_turma, cpf_professor, id_sala, id_disciplina) VALUES ('${data}', ${id_curso}, ${id_turma}, ${cpf_professor}, ${id_sala}, ${id_disciplina})`;
+                await this.client.query(comando);
 
-                console.log(`- função agendarAula() concluída com sucesso.`)
-                return `aula agendada para a data ${data} com sucesso`
+                console.log(`- função agendarAula() concluída com sucesso.`);
+                return `aula agendada para a data ${data} com sucesso`;
             }
 
 
@@ -97,10 +101,8 @@ export default class AgendaFacade {
                 const estaDisponivelNoDia = ([disponibilidade.find((dia) => dia == dias_da_semana[dia_semana])]);
 
                 if (estaDisponivelNoDia[0] == undefined) {
-                    console.log('retornou false -- especifica')
                     return false;
                 } else {
-                    console.log('retornou true -- especifica')
                     return true;
                 }
 
@@ -117,10 +119,8 @@ export default class AgendaFacade {
                 const quantidade = (await this.client.query(comando)).rows.map(row => row.count)[0];
                 
                 if(quantidade >= disponibilidade) {
-                    console.log('retornou false -- quantidade')
                     return false;
                 } else {
-                    console.log('retornou true -- quantidade')
                     return true;
                 }
             }
@@ -143,6 +143,29 @@ export default class AgendaFacade {
         const segundaFeiraDaSemana = segundaFeira.toISOString().split('T')[0];
 
         return segundaFeiraDaSemana;
+    }
+
+    async verificarSeProfessorJaTemAulaNoDia(cpf_professor, data) {
+        try {
+            this.conectarDatabase();
+
+            console.log(`- verificarSeProfessorJaTemAulaNoDia(${cpf_professor}, ${data}) -- facades/Agenda.mjs`)
+
+            const comando = `SELECT cpf_professor FROM agenda WHERE cpf_professor = ${cpf_professor} AND data = '${data}'`;
+            const resultado = ((await this.client.query(comando)).rows.map(row => row.cpf_professor))[0];
+
+            if(resultado == undefined) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } catch (erro) {
+            console.error(erro);
+            return erro;
+        } finally {
+            this.closeDatabase();
+        }
     }
 
     async verificarSeTurmaFazParteDoCurso(id_curso, id_turma) {
@@ -233,6 +256,6 @@ export default class AgendaFacade {
 
     async closeDatabase() {
         await this.client.end();
-        console.log('- Desconectado do BD -- facades/Agenda.mjs');
+        // console.log('- Desconectado do BD -- facades/Agenda.mjs');
     }
 }
