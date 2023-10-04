@@ -31,8 +31,8 @@ export default class AgendaFacade {
             this.conectarDatabase()
 
             if (!professorEstaDisponivel) {
-                console.error(`-- ERRO -- PROFESSOR NÃO POSSUI DISPONIBILIDADE PARA O DIA SELECIONADO -- facades/Agenda.mjs`)
-                return 'professor não possui disponibilidade para o dia selecionado'
+                console.error(`-- ERRO -- PROFESSOR NÃO POSSUI DISPONIBILIDADE PARA O DIA SELECIONADO OU EXCEDEU LIMITE DE AULAS DISPONÍVEIS POR SEMANA -- facades/Agenda.mjs`)
+                return 'professor não possui disponibilidade para o dia selecionado ou excedeu limite de aulas disponíveis por semana'
             } else if (!turmaFazParteDoCurso) {
                 console.error(`-- ERRO -- TURMA NÃO FAZ O CURSO SELECIONADO -- facades/Agenda.mjs`)
                 return 'turma não faz o curso selecionado'
@@ -64,47 +64,85 @@ export default class AgendaFacade {
 
     async verificarDisponibilidadeDoProfessor(data, cpf_professor) {
         try {
+            this.conectarDatabase();
+
             console.log(`- verificarDisponibilidadeDoProfessor(${data}, ${cpf_professor}) -- facades/Agenda.mjs`);
 
             const dataSelecionada = new Date(data);
-            const dia_semana = dias_da_semana[dataSelecionada.getDay()];
+            const dia_semana = dataSelecionada.getDay();
             //função getDay() só funciona quando é usada em um Date(), por isso acima coloquei esse Date(data) na dataSelecionada
             //é utilizada para buscar no array dias_da_semana[] e verificar o dia da semana da data selecionada
 
             let disponibilidade = await professorFacade.consultarDisponibilidade(cpf_professor);
 
             const verificarTipoDeDisponibilidade = async () => {
-                if (Number.isInteger(parseInt(disponibilidade[0]))) {
-                    disponibilidade = parseInt(disponibilidade[0])
+                //se a disponibilidade consultada for um número inteiro o tipo de disponibilidade é por quantidade
+                //se for NaN, o tipo de disponibilidade é específica
 
-                    console.log(`- tipo de disponibilidade do professor: quantidade -- facades/Agenda.mjs`)
-                    return 'quantidade'
+                if (Number.isInteger(parseInt(disponibilidade[0]))) {
+                    disponibilidade = parseInt(disponibilidade[0]); 
+
+                    console.log(`- tipo de disponibilidade do professor: quantidade -- facades/Agenda.mjs`);
+                    return 'quantidade';
                 } else {
 
-                    console.log(`- tipo de disponibilidade do professor: específica -- facades/Agenda.mjs`)
-                    return 'especifica'
+                    console.log(`- tipo de disponibilidade do professor: específica -- facades/Agenda.mjs`);
+                    return 'especifica';
                 }
             }
 
             const tipoDeDisponibilidade = await verificarTipoDeDisponibilidade();
 
             if (tipoDeDisponibilidade == 'especifica') {
-                const estaDisponivelNoDia = ([disponibilidade.find((dia) => dia == dia_semana)]);
+                const estaDisponivelNoDia = ([disponibilidade.find((dia) => dia == dias_da_semana[dia_semana])]);
 
                 if (estaDisponivelNoDia[0] == undefined) {
-                    return false
+                    console.log('retornou false -- especifica')
+                    return false;
                 } else {
-                    return true
+                    console.log('retornou true -- especifica')
+                    return true;
                 }
 
             } else if (tipoDeDisponibilidade == 'quantidade') {
+                const segundaFeira = await this.acharSegundaFeira(data);
+                const dateSegundaFeira = new Date(segundaFeira)
+
+                const dateSabado = new Date(segundaFeira);
+                dateSabado.setDate(dateSegundaFeira.getDate() + 5);
+
+                const sabado = dateSabado.toISOString().split('T')[0];
                 
+                const comando = `SELECT COUNT(*) FROM agenda WHERE cpf_professor = '${cpf_professor}' AND data BETWEEN '${segundaFeira}' AND '${sabado}'`;
+                const quantidade = (await this.client.query(comando)).rows.map(row => row.count)[0];
+                
+                if(quantidade >= disponibilidade) {
+                    console.log('retornou false -- quantidade')
+                    return false;
+                } else {
+                    console.log('retornou true -- quantidade')
+                    return true;
+                }
             }
         } catch (erro) {
             console.error(erro);
             return erro;
+        } finally {
+            this.closeDatabase();
         }
 
+    }
+
+    async acharSegundaFeira(data) {
+        data = new Date(data);
+        const diferenca = data.getDay();
+
+        const segundaFeira = new Date(data);
+        segundaFeira.setDate(data.getDate() - diferenca);
+
+        const segundaFeiraDaSemana = segundaFeira.toISOString().split('T')[0];
+
+        return segundaFeiraDaSemana;
     }
 
     async verificarSeTurmaFazParteDoCurso(id_curso, id_turma) {
