@@ -4,35 +4,35 @@ const disciplinaFacade = new DisciplinaFacade();
 const cadastrar = async (req, res) => {
     const nome = req.body.nome;
 
-    await disciplinaFacade.cadastrar(nome);
-    res.status(201).send({ mensagem: `Disciplina '${nome}' cadastrada com sucesso!` });
+    const resultado = await disciplinaFacade.cadastrar(nome);
+    res.status(201).send({ resultado: resultado });
 }
 
 const editar = async (req, res) => {
     const id = req.params.id;
     const nome = req.body.nome;
 
-    await disciplinaFacade.editar(id, nome);
-    res.status(201).send({ mensagem: `Disciplina ID=${id} teve seu nome alterado para: ${nome}` });
+    const resultado = await disciplinaFacade.editar(id, nome);
+    res.status(201).send({ resultado: resultado });
 }
 
-const consultar = async(req, res) => {
+const consultar = async (req, res) => {
     const resultado = await disciplinaFacade.consultar()
-    res.status(200).send({disciplinas: resultado})
+    res.status(200).send({ disciplinas: resultado })
 }
 
-const deletar = async(req, res) => {
+const deletar = async (req, res) => {
     const id = req.params.id;
 
-    await disciplinaFacade.deletar(id);
-    res.status(201).send({mensagem: `Disciplina ID=${id} excluída com sucesso.`})
+    const resultado = await disciplinaFacade.deletar(id);
+    res.status(201).send({ resultado: resultado })
 }
 
 const importarCSV = async (req, res) => {
     const filePath = req.body.file_path;
 
     const data = await disciplinaFacade.importarCSV(filePath);
-    res.status(200).send({InformaçõesImportadas: data})
+    res.status(200).send({ InformaçõesImportadas: data })
 }
 
 export { cadastrar, editar, consultar, deletar, importarCSV };
