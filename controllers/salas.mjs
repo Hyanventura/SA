@@ -5,8 +5,8 @@ const cadastrar = async (req, res) => {
     const nome = req.body.nome;
     const cod = req.body.cod;
 
-    await salaFacade.cadastrar(nome, cod);
-    res.status(201).send(`Sala '${nome}' de código ${cod} cadastrada com sucesso!`);
+    const resultado = await salaFacade.cadastrar(nome, cod);
+    res.status(201).send({resultado: resultado});
 }
 
 const editar = async (req, res) => {
@@ -14,8 +14,8 @@ const editar = async (req, res) => {
     const nome = req.body.nome;
     const cod = req.body.cod;
 
-    await salaFacade.editar(id, nome, cod);
-    res.status(201).send(`Sala ID=${id} alterada com sucesso!\nNOME=${nome}\nCOD=${cod}`)
+    const resultado = await salaFacade.editar(id, nome, cod);
+    res.status(201).send({resultado: resultado});
 }
 
 const consultar = async (req, res) => {
@@ -28,8 +28,8 @@ const consultar = async (req, res) => {
 const deletar = async (req, res) => {
     const id = req.params.id;
 
-    await salaFacade.deletar(id);
-    res.status(200).send(`Sala ID=${id} excluída com sucesso.`);
+    const resultado = await salaFacade.deletar(id);
+    res.status(200).send({resultado: resultado});
 }
 
 const importarCSV = async (req, res) => {
