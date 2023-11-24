@@ -19,6 +19,23 @@ export default class AgendaFacade {
         // console.log('- Conectado ao BD -- facades/Agenda.mjs')
     }
 
+    async consultar(dataInicial, dataFinal) {
+        console.log(`- consultar(${dataInicial}, ${dataFinal}) -- facades/Agenda.mjs`)
+
+        try {
+            this.conectarDatabase();
+
+            const comando = `select agenda.data, cursos.id as ID_CURSO ,cursos.nome as NOME_CURSO, turmas.id as ID_TURMA ,turmas.nome as NOME_TURMA, professores.cpf as CPF_PROFESSOR ,professores.nome as NOME_PROFESSOR, salas.id as ID_SALA ,salas.cod as COD_SALA, salas.nome as NOME_SALA from agenda left join cursos on cursos.id = agenda.id_curso left join turmas on turmas.id = agenda.id_turma left join professores on professores.cpf = agenda.cpf_professor left join salas on salas.id = agenda.id_sala where agenda.data between '${dataInicial}' and '${dataFinal}'`;
+            const resultado = (await this.client.query(comando)).rows
+
+            return resultado;
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    }
+
     async agendarAula(data, id_curso, id_turma, cpf_professor, id_sala, id_disciplina) {
         console.log(`- agendarAula(${data}, ${id_curso}, ${id_turma}, ${cpf_professor}, ${id_sala}, ${id_disciplina}) -- facades/Agenda.mjs`);
 
