@@ -13,10 +13,8 @@ const cadastrar = async (req, res) => {
     const qtd = req.body.qtd;
     const disciplinas = req.body.disciplinas;
 
-    await professorFacade.cadastrar(cpf, nome, status);
-    await professorFacade.cadastrarDisponibilidade(cpf, seg, ter, qua, qui, sex, qtd);
-    await professorFacade.cadastrarDisciplinas(cpf, disciplinas);
-    res.status(201).send({ mensagem: `Professor ${nome} cadastrado com sucesso!` });
+    const resultado = await professorFacade.cadastrar(cpf, nome, status, disciplinas, seg, ter, qua, qui, sex, qtd);
+    res.status(201).send({ resultado: resultado });
 }
 
 const editar = async (req, res) => {
@@ -31,10 +29,8 @@ const editar = async (req, res) => {
     const qtd = req.body.qtd;
     const disciplinas = req.body.disciplinas;
 
-    await professorFacade.editar(cpf, nome, status);
-    await professorFacade.cadastrarDisponibilidade(cpf, seg, ter, qua, qui, sex, qtd);
-    await professorFacade.cadastrarDisciplinas(cpf, disciplinas);
-    res.status(201).send({ mensagem: `Professor portador do CPF ${cpf} editado com sucesso!` })
+    const resultado = await professorFacade.editar(cpf, nome, status, disciplinas, seg, ter, qua, qui, sex, qtd);
+    res.status(201).send({ resultado: resultado })
 }
 
 const consultar = async (req, res) => {
@@ -65,7 +61,7 @@ const importarCSV = async (req, res) => {
     //             C:/users/ramon/desktop/arquivo.csv CORRETO 
 
     const data = await professorFacade.importarCSV(filePath);
-    res.status(201).send({InformaçõesImportadas: data})
+    res.status(201).send({ InformaçõesImportadas: data })
 }
 
 export { cadastrar, editar, consultar, consultarDisponibilidade, consultarDisciplinasDoProfessor, importarCSV };
