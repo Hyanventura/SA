@@ -7,9 +7,8 @@ const cadastrar = async (req, res) => {
     const disciplinas = req.body.disciplinas;
     const qtd_aulas_semana = req.body.qtd_aulas_semana;
 
-    await cursoFacade.cadastrar(nome, cod);
-    await cursoFacade.cadastrarDisciplinas(cod, disciplinas, qtd_aulas_semana);
-    res.status(201).send(`Curso '${nome}' cadastrado com código '${cod}' com sucesso!`)
+    const resultado = await cursoFacade.cadastrar(nome, cod, disciplinas, qtd_aulas_semana);
+    res.status(201).send({resultado: resultado})
 }
 
 const editar = async (req, res) => {
@@ -19,9 +18,8 @@ const editar = async (req, res) => {
     const disciplinas = req.body.disciplinas;
     const qtd_aulas_semana = req.body.qtd_aulas_semana;
 
-    await cursoFacade.editar(id, nome, cod);
-    await cursoFacade.cadastrarDisciplinas(cod, disciplinas, qtd_aulas_semana);
-    res.status(201).send(`Curso ID=${id} alterado com sucesso!\nNOME=${nome}\nCOD=${cod}`)
+    const resultado = await cursoFacade.editar(id, nome, cod, disciplinas, qtd_aulas_semana);
+    res.status(201).send({resultado: resultado})
 }
 
 const consultar = async (req, res) => {
@@ -34,8 +32,8 @@ const consultar = async (req, res) => {
 const deletar = async (req, res) => {
     const id = req.params.id;
 
-    await cursoFacade.deletar(id);
-    res.status(200).send(`Curso ID=${id} excluído com sucesso.`)
+    const resultado = await cursoFacade.deletar(id);
+    res.status(200).send({resultado: resultado})
 }
 
 const importarCSV = async (req, res) => {
