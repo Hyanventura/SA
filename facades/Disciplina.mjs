@@ -51,17 +51,24 @@ export default class DisciplinaFacade {
         }
     }
 
-    async consultar() {
-        console.log(`- consultar() -- facades/Disciplina.mjs`)
+    async consultar(id) {
+        console.log(`- consultar(${id}) -- facades/Disciplina.mjs`)
 
         try {
             const client = await this.pool.connect();
 
             try {
-                const comando = `SELECT * FROM disciplinas`;
-                const resultado = (await client.query(comando)).rows;
+                if (id == 'todas' || id == 'todos') {
+                    const comando = `SELECT * FROM disciplinas`;
+                    const resultado = await client.query(comando);
 
-                return resultado;
+                    return resultado.rows;
+                } else {
+                    const comando = `SELECT * FROM disciplinas where id = ${id}`;
+                    const resultado = await client.query(comando);
+
+                    return resultado.rows;
+                }
             } finally {
                 client.release();
             }

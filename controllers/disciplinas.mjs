@@ -17,7 +17,9 @@ const editar = async (req, res) => {
 }
 
 const consultar = async (req, res) => {
-    const resultado = await disciplinaFacade.consultar()
+    const id = req.params.id;
+
+    const resultado = await disciplinaFacade.consultar(id)
     res.status(200).send({ disciplinas: resultado })
 }
 
