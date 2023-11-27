@@ -18,11 +18,17 @@ export default class ProfessorFacade {
             const client = await this.pool.connect();
 
             try {
-                const comando = `INSERT INTO professores(cpf, nome,  status) VALUES (${cpf}, '${nome}', ${status});`;
-                await client.query(comando);
+                const consulta = await this.consultar(cpf)
 
-                if((seg == undefined && ter == undefined && qua == undefined && qui == undefined && sex == undefined && qtd == undefined)){
-                    if(disciplinas == undefined){
+                if (consulta.length > 0) {
+                    return `Professor de CPF = ${cpf} já existe, não foi possível cadastrá-lo`
+                } else {
+                    const comando = `INSERT INTO professores(cpf, nome,  status) VALUES (${cpf}, '${nome}', ${status});`;
+                    await client.query(comando);
+                }
+
+                if ((seg == undefined && ter == undefined && qua == undefined && qui == undefined && sex == undefined && qtd == undefined)) {
+                    if (disciplinas == undefined) {
                         return `Nenhuma disponibilidade nem disciplina selecionada, cadastrando apenas CPF e NOME`;
                     } else {
                         this.cadastrarDisciplinas(cpf, disciplinas);
@@ -56,8 +62,8 @@ export default class ProfessorFacade {
                 const comando = `UPDATE professores SET nome = '${nome}', status = ${status} where cpf = ${cpf}`;
                 await client.query(comando);
 
-                if((seg == undefined && ter == undefined && qua == undefined && qui == undefined && sex == undefined && qtd == undefined)){
-                    if(disciplinas == undefined){
+                if ((seg == undefined && ter == undefined && qua == undefined && qui == undefined && sex == undefined && qtd == undefined)) {
+                    if (disciplinas == undefined) {
                         return `Nenhuma disponibilidade nem disciplina selecionada, editando apenas CPF e NOME`;
                     } else {
                         this.cadastrarDisciplinas(cpf, disciplinas);
@@ -89,6 +95,7 @@ export default class ProfessorFacade {
             const client = await this.pool.connect();
 
             try {
+
                 if (cpf == 'todos') {
                     const comando = `SELECT * FROM professores`;
                     const resultado = await client.query(comando);
