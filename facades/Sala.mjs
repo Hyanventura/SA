@@ -78,6 +78,24 @@ export default class SalaFacade {
         }
     }
 
+    async consultarPorNome(nome) {
+        try {
+            const client = await this.pool.connect();
+            try {
+                const comando = `SELECT id, nome, cod FROM salas WHERE unaccent(nome) ilike '%${nome}%'`;
+                const resultado = (await client.query(comando)).rows
+
+                return resultado;
+
+            } finally {
+                client.release();
+            }
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    }
+
     async deletar(id) {
         console.log(`- deletar(${id}) -- facades/Sala.mjs`);
 
