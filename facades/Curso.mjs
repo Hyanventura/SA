@@ -25,7 +25,7 @@ export default class CursoFacade {
                 if (disciplinas == undefined || qtd_aulas_semana == undefined) {
                     return 'Disciplina ou Quantidade de aulas por semana não informados, cadastrando apenas NOME e CÓDIGO';
 
-                } else if (disciplinas.length != qtd_aulas_semana.length){
+                } else if (disciplinas.length != qtd_aulas_semana.length) {
                     return 'Quantidade de disciplinas informada difere do número de quantidades de aulas por semana informado, cadastrando apenas NOME e CÓDIGO';
                 } else {
                     this.cadastrarDisciplinas(cod, disciplinas, qtd_aulas_semana);
@@ -79,7 +79,7 @@ export default class CursoFacade {
                 if (disciplinas == undefined || qtd_aulas_semana == undefined) {
                     return 'Disciplina ou Quantidade de aulas por semana não informados, editando apenas NOME e CÓDIGO';
 
-                } else if (disciplinas.length != qtd_aulas_semana.length){
+                } else if (disciplinas.length != qtd_aulas_semana.length) {
                     return 'Quantidade de disciplinas informada difere do número de quantidades de aulas por semana informado, editando apenas NOME e CÓDIGO';
                 } else {
                     this.cadastrarDisciplinas(cod, disciplinas, qtd_aulas_semana);
@@ -114,6 +114,24 @@ export default class CursoFacade {
                     console.log(`- consultar(${id}) -- facades/Curso.mjs`)
                     return resultado.rows;
                 }
+            } finally {
+                client.release();
+            }
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    }
+
+    async consultarPorNome(nome) {
+        try {
+            const client = await this.pool.connect();
+            try {
+                const comando = `SELECT id, nome, cod FROM cursos WHERE unaccent(nome) ilike '%${nome}%'`;
+                const resultado = (await client.query(comando)).rows
+
+                return resultado;
+
             } finally {
                 client.release();
             }

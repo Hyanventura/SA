@@ -26,7 +26,14 @@ const consultar = async (req, res) => {
     const id = req.params.id;
 
     const resultado = await cursoFacade.consultar(id);
-    res.status(200).send({cursos: resultado})
+    res.status(200).send({resultado: resultado})
+}
+
+const consultarPorNome = async (req, res) => {
+    const nome = req.body.nome;
+
+    const resultado = await cursoFacade.consultarPorNome(nome);
+    res.status(200).send({resultado: resultado});
 }
 
 const deletar = async (req, res) => {
@@ -43,4 +50,4 @@ const importarCSV = async (req, res) => {
     res.status(200).send({InformaçõesImportadas: data})
 }
 
-export { cadastrar, editar, consultar, deletar, importarCSV };
+export { cadastrar, editar, consultar, deletar, importarCSV, consultarPorNome };
