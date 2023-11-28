@@ -78,6 +78,24 @@ export default class TurmaFacade {
         }
     }
 
+    async consultarPorNome(nome) {
+        try {
+            const client = await this.pool.connect();
+            try {
+                const comando = `select turmas.id, turmas.nome, cursos.nome AS curso from turmas left join cursos on turmas.id_curso = cursos.id WHERE unaccent(turmas.nome) ilike '%${nome}%'`;
+                const resultado = (await client.query(comando)).rows
+
+                return resultado;
+
+            } finally {
+                client.release();
+            }
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    }
+
     async deletar(id) {
         console.log(`- deletar(${id}) -- facades/Turma.mjs`)
 

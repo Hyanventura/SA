@@ -25,6 +25,13 @@ const consultar = async (req, res) => {
     res.status(200).send({ turmas: resultado })
 }
 
+const consultarPorNome = async (req, res) => {
+    const nome = req.body.nome;
+
+    const resultado = await turmaFacade.consultarPorNome(nome);
+    res.status(200).send({resultado: resultado});
+}
+
 const deletar = async (req, res) => {
     const id = req.params.id;
 
@@ -39,4 +46,4 @@ const importarCSV = async (req, res) => {
     res.status(200).send({ InformaçõesImportadas: data })
 }
 
-export { cadastrar, editar, consultar, deletar, importarCSV };
+export { cadastrar, editar, consultar, consultarPorNome, deletar, importarCSV };
