@@ -40,6 +40,7 @@ export default class AgendaFacade {
         console.log(`- agendarAula(${data}, ${id_curso}, ${id_turma}, ${cpf_professor}, ${id_sala}, ${id_disciplina}) -- facades/Agenda.mjs`);
 
         try {
+            const disciplinaEstaDisponivel = await this.verificarDisponibilidadeDaDisciplinaPorCurso(id_disciplina, id_curso, data);
             const professorEstaDisponivel = await this.verificarDisponibilidadeDoProfessor(data, cpf_professor);
             const turmaFazParteDoCurso = await this.verificarSeTurmaFazParteDoCurso(id_curso, id_turma);
             const salaEstaDisponivel = await this.verificarDisponibilidadeDaSalaNoDia(data, id_sala);
@@ -49,7 +50,10 @@ export default class AgendaFacade {
             const client = await this.pool.connect();
 
             try {
-                if (!professorEstaDisponivel) {
+                if (!disciplinaEstaDisponivel) {
+                    console.error(`-- ERRO -- EXCEDIDO LIMITE DE AULAS DA DISCIPLINA SELECIONADA PARA O CURSO SELECIONADO NESSA SEMANA -- facades/Agenda.mjs`);
+                    return 'excedido limite de aulas da disciplina selecionada para o curso selecionado nessa semana';
+                } else if (!professorEstaDisponivel) {
                     console.error(`-- ERRO -- PROFESSOR NÃO POSSUI DISPONIBILIDADE PARA O DIA SELECIONADO OU EXCEDEU LIMITE DE AULAS DISPONÍVEIS POR SEMANA -- facades/Agenda.mjs`);
                     return 'professor não possui disponibilidade para o dia selecionado ou excedeu limite de aulas disponíveis por semana';
                 } else if (!turmaFazParteDoCurso) {
@@ -251,19 +255,55 @@ export default class AgendaFacade {
                     const comando = `SELECT id_disciplina FROM disciplina_professores WHERE cpf_professor = ${cpf_professor}`;
                     const resultado = (await client.query(comando)).rows;
                     const disciplinas = resultado.map(row => row.id_disciplina);
-    
+
                     return disciplinas;
                 }
-    
+
                 const disciplinasDoProfessor = await consultarDisciplinasDoProfessor();
-    
+
                 const professorLecionaADisciplina = ([disciplinasDoProfessor.find((disciplina) => disciplina == id_disciplina)]);
-    
+
                 if (professorLecionaADisciplina[0] == undefined) {
                     return false;
                 } else {
                     return true;
                 }
+            } finally {
+                client.release();
+            }
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    }
+
+    async verificarDisponibilidadeDaDisciplinaPorCurso(id_disciplina, id_curso, data) {
+        try {
+            const client = await this.pool.connect();
+
+            try {
+                const segundaFeira = await this.acharSegundaFeira(data);
+                const dateSegundaFeira = new Date(segundaFeira)
+
+                const dateSabado = new Date(segundaFeira);
+                dateSabado.setDate(dateSegundaFeira.getDate() + 5);
+
+                const sabado = dateSabado.toISOString().split('T')[0];
+
+                const comandoQuantidadeDisponivel = `SELECT qtd_aulas_semana FROM disciplina_cursos where id_disciplina = ${id_disciplina} and id_curso = ${id_curso}`;
+                const quantidadeDisponivel = (await client.query(comandoQuantidadeDisponivel)).rows.map(row => row.qtd_aulas_semana)[0]
+
+                console.log(quantidadeDisponivel);
+
+                const comandoQuantidadeAgendado = `SELECT COUNT(*) FROM agenda WHERE id_disciplina = '${id_disciplina}' AND id_curso = '${id_curso}' AND data BETWEEN '${segundaFeira}' AND '${sabado}'`;
+                const quantidadeAgendado = (await client.query(comandoQuantidadeAgendado)).rows.map(row => row.count)[0];
+
+                if (quantidadeAgendado >= quantidadeDisponivel) {
+                    return false;
+                } else {
+                    return true;
+                }
+
             } finally {
                 client.release();
             }
