@@ -116,6 +116,24 @@ export default class ProfessorFacade {
         }
     }
 
+    async consultarPorNome(nome) {
+        try {
+            const client = await this.pool.connect();
+            try {
+                const comando = `SELECT cpf, nome FROM professores WHERE unaccent(nome) ilike '%${nome}%' and status = 1`;
+                const resultado = (await client.query(comando)).rows
+
+                return resultado;
+
+            } finally {
+                client.release();
+            }
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    }
+
     async consultarDisponibilidade(cpf) {
         console.log(`- consultarDisponibilidade(${cpf}) -- facades/Professor.mjs`)
 

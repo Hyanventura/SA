@@ -40,6 +40,13 @@ const consultar = async (req, res) => {
     res.status(200).send(resultado)
 }
 
+const consultarPorNome = async (req, res) => {
+    const nome = req.body.nome;
+
+    const resultado = await professorFacade.consultarPorNome(nome);
+    res.status(200).send({resultado: resultado});
+}
+
 const consultarDisponibilidade = async (req, res) => {
     const cpf = req.params.cpf;
 
@@ -64,4 +71,4 @@ const importarCSV = async (req, res) => {
     res.status(201).send({ InformaçõesImportadas: data })
 }
 
-export { cadastrar, editar, consultar, consultarDisponibilidade, consultarDisciplinasDoProfessor, importarCSV };
+export { cadastrar, editar, consultar, consultarPorNome, consultarDisponibilidade, consultarDisciplinasDoProfessor, importarCSV };
