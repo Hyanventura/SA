@@ -1,8 +1,11 @@
 import express from 'express';
+import cors from 'cors';
 const app = express();
 const port = 3000;
+
 import bodyParser from 'body-parser';
 app.use(bodyParser.json());
+app.use(cors())
 
 import professoresRoutes from "./routes/professores.mjs";
 import disciplinasRoutes from './routes/disciplinas.mjs';
