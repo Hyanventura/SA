@@ -2,8 +2,8 @@ import AgendaFacade from "../facades/Agenda.mjs";
 const agendaFacade = new AgendaFacade()
 
 const consultar = async (req, res) => {
-    const dataInicial = req.body.dataInicial;
-    const dataFinal = req.body.dataFinal;
+    const dataInicial = req.params.dataInicial;
+    const dataFinal = req.params.dataFinal;
 
     const resultado = await agendaFacade.consultar(dataInicial, dataFinal);
     res.status(200).send({resultado: resultado});

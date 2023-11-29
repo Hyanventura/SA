@@ -22,7 +22,7 @@ export default class AgendaFacade {
             const client = await this.pool.connect();
             try {
 
-                const comando = `select agenda.data, cursos.id as ID_CURSO ,cursos.nome as NOME_CURSO, turmas.id as ID_TURMA ,turmas.nome as NOME_TURMA, professores.cpf as CPF_PROFESSOR ,professores.nome as NOME_PROFESSOR, salas.id as ID_SALA ,salas.cod as COD_SALA, salas.nome as NOME_SALA from agenda left join cursos on cursos.id = agenda.id_curso left join turmas on turmas.id = agenda.id_turma left join professores on professores.cpf = agenda.cpf_professor left join salas on salas.id = agenda.id_sala where agenda.data between '${dataInicial}' and '${dataFinal}'`;
+                const comando = `select agenda.id as ID_AGENDA, agenda.data, cursos.id as ID_CURSO ,cursos.nome as NOME_CURSO, turmas.id as ID_TURMA ,turmas.nome as NOME_TURMA, professores.cpf as CPF_PROFESSOR ,professores.nome as NOME_PROFESSOR, salas.id as ID_SALA ,salas.cod as COD_SALA, salas.nome as NOME_SALA from agenda left join cursos on cursos.id = agenda.id_curso left join turmas on turmas.id = agenda.id_turma left join professores on professores.cpf = agenda.cpf_professor left join salas on salas.id = agenda.id_sala where agenda.data between '${dataInicial}' and '${dataFinal}' order by data`;
                 const resultado = (await client.query(comando)).rows
 
                 return resultado;
